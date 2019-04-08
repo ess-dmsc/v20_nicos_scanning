@@ -5,7 +5,6 @@ sys.path.append("/Users/mattclarke/Desktop/nicos_scan")
 from kafka import KafkaProducer, KafkaConsumer, TopicPartition
 import time
 import json
-from epics import PV
 import fbschemas.hs00.EventHistogram as EventHistogram
 import fbschemas.hs00.ArrayDouble as ArrayDouble
 from fbschemas.hs00.Array import Array
@@ -85,7 +84,6 @@ def deserialise_hs00(buf):
         "data": data.reshape(shape),
     }
     return hist
-
 
 
 def get_total_counts(consumer, topic):
