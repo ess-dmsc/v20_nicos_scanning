@@ -111,7 +111,8 @@ def do_scan():
     histogram = []
     last_value = 0
 
-    # TODO: add start filewriter
+    # TODO: start filewriter
+    # start_filewriter()
 
     for i in POSITIONS_1:
         # Move motor 1 to position
@@ -137,7 +138,8 @@ def do_scan():
             last_value = next_value
             print("Value after counting = {}".format(last_value))
 
-    # TODO: add stop filewriter
+    # TODO: stop filewriter
+    # stop_filewriter()
 
     # Print results
     row = 0
