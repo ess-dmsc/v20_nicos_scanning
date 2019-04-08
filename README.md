@@ -14,6 +14,7 @@ NICOS and just-bin-it script for scanning at V20.
 >> cd just-bin-it
 >> python main.py -b localhost -t hist_commands
 ```
+Replace localhost with the correct Kafka broker address. See just-bin-it's README for more information.
 
 ## Edit scan.py
 
