@@ -40,13 +40,13 @@ def generate_config(id, count_time):
         "cmd": "config",
         "data_brokers": KAFKA_ADDRESS,
         "data_topics": [EVENT_TOPIC],
+        "interval": count_time,
         "histograms": [
             {
                 "type": "sehist1d",
                 "tof_range": [0, 100_000_000],
                 "num_bins": 50,
                 "topic": HISTOGRAM_TOPIC,
-                "interval": count_time,
                 "id": id
             }
         ],
@@ -56,10 +56,14 @@ def generate_config(id, count_time):
 def deserialise_hs00(buf):
     """
     Convert flatbuffer into a histogram.
-
     :param buf:
     :return: dict of histogram information
     """
+    # Check schema is correct
+    # if get_schema(buf) != "hs00":
+    #     raise Exception(
+    #         f"Incorrect schema: expected hs00 but got {get_schema(buf)}")
+
     event_hist = EventHistogram.EventHistogram.GetRootAsEventHistogram(buf, 0)
 
     dims = []
@@ -77,16 +81,17 @@ def deserialise_hs00(buf):
         else:
             raise TypeError("Type of the bin boundaries is incorrect")
 
-        info = {
+        hist_info = {
             "length": event_hist.DimMetadata(i).Length(),
             "edges": bins.tolist(),
             "type": bin_type,
         }
-        dims.append(info)
+        dims.append(hist_info)
 
     # Get the data
     if event_hist.DataType() != Array.ArrayDouble:
-        raise TypeError("Type of the data array is incorrect")
+        raise TypeError(
+            "Type of the data array is incorrect")  # pragma: no mutate
 
     data_fb = event_hist.Data()
     temp = ArrayDouble.ArrayDouble()
@@ -99,6 +104,9 @@ def deserialise_hs00(buf):
         "shape": shape,
         "dims": dims,
         "data": data.reshape(shape),
+        "info": event_hist.Info().decode("utf-8")
+        if event_hist.Info()
+        else "",  # pragma: no mutate
     }
     return hist
 
